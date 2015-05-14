@@ -35,7 +35,6 @@ public class App
         server.createContext("/test", new Handler());
         server.setExecutor(null);
         server.start();
-        System.out.println();
     }
 
     private static class Handler implements HttpHandler {
@@ -45,8 +44,7 @@ public class App
             String json = genson.serialize(ds);
 
             Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
-            File dir = new File(Handler.class.getResource("/").getPath());
-            cfg.setDirectoryForTemplateLoading(dir);
+            cfg.setClassForTemplateLoading(App.class, "/");
             Template template = cfg.getTemplate("page.html");
             Map data = new HashMap<String, Object>();
             data.put("json", json);
