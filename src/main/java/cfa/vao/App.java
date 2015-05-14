@@ -41,19 +41,21 @@ public class App
         public void handle(HttpExchange t) throws IOException {
             SpectralDataset ds = make_test_spectrum();
             Genson genson = make_genson();
-            String json = genson.serialize(ds);
+            String meta = genson.serialize(ds);
+            String data = genson.serialize(ds, SimpleSpectrum.class);
 
             Configuration cfg = new Configuration(Configuration.VERSION_2_3_22);
             cfg.setClassForTemplateLoading(App.class, "/");
             Template template = cfg.getTemplate("page.html");
-            Map data = new HashMap<String, Object>();
-            data.put("json", json);
+            Map dict = new HashMap<String, Object>();
+            dict.put("metadata", meta);
+            dict.put("data", data);
 
             t.sendResponseHeaders(200, 0);
             OutputStream os = t.getResponseBody();
             Writer w = new OutputStreamWriter(os);
             try {
-                template.process(data, w);
+                template.process(dict, w);
                 w.close();
             } catch (TemplateException e) {
                 Logger.getLogger(Handler.class.getName()).log(Level.SEVERE, e.getMessage(), e);
@@ -199,16 +201,17 @@ public class App
             //       it which flavor of content is wanted (ie subclass of List type)
             SPPoint point = (SPPoint)factory.newInstance( SPPoint.class );
 
-            c10.setValue(freq[ii]);
-            point.getSpectralAxis().setValue( c10 );
+            Quantity sp = new Quantity("freq",freq[ii],"Hz","em.freq");
+            point.getSpectralAxis().setValue(sp);
             point.getSpectralAxis().getAccuracy().setBinSize(c14);
-            point.getSpectralAxis().getAccuracy().setStatError( c11 );
-            point.getSpectralAxis().getAccuracy().setSysError( c12 );
+            point.getSpectralAxis().getAccuracy().setStatError(c11);
+            point.getSpectralAxis().getAccuracy().setSysError(c12);
             point.getSpectralAxis().getResolution().setRefVal( c13 );
 
-            c20.setValue(flux[ii]);
-            point.getFluxAxis().setValue( c20 );
-            point.getFluxAxis().getAccuracy().setStatError( c21 );
+            Quantity fl = new Quantity("flux",flux[ii], "W.m**(-2).Hz**(-1)","phot.flux.density;em.freq");
+            Quantity err = new Quantity("flux_err",flux[ii]*0.1, "W.m**(-2).Hz**(-1)","phot.flux.density;em.freq");
+            point.getFluxAxis().setValue( fl );
+            point.getFluxAxis().getAccuracy().setStatError( err );
             point.getFluxAxis().getAccuracy().setSysError( c22 );
             point.getFluxAxis().getAccuracy().setQualityStatus( c23 );
             List<Correction> corrs = new ArrayList<Correction>();
@@ -261,6 +264,7 @@ public class App
                 .rename("uRL", "URL")
                 .rename("uCD", "UCD")
                 .exclude("setID")
+                .exclude("setIdentifier")
                 .exclude("setModelPath")
                 .exclude("setName")
                 .exclude("setDescription")
@@ -322,6 +326,7 @@ public class App
                 .exclude("length")
                 .useIndentation(true)
                 .useRuntimeType(true)
+                .useBeanViews(true)
                 .setSkipNull(true)
                 .withConverter(new DoubleConverter(), Double.class)
                 .create();

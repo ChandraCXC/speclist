@@ -15,34 +15,63 @@
 <button id="toggle-level1-btn">Toggle level1</button>
 <button id="toggle-level2-btn">Toggle level2</button>
 
-<div id="json"></div>
+<div id="metadata"></div>
+<div id="data"></div>
 
 <script>
-var json = ${json}
+var metadata = ${metadata}
 
     $(function() {
-    $('#json').JSONView(json);
+    $('#metadata').JSONView(metadata);
 
     $('#collapse-btn').on('click', function() {
-    $('#json').JSONView('collapse');
+    $('#metadata').JSONView('collapse');
     });
 
     $('#expand-btn').on('click', function() {
-    $('#json').JSONView('expand');
+    $('#metadata').JSONView('expand');
     });
 
     $('#toggle-btn').on('click', function() {
-    $('#json').JSONView('toggle');
+    $('#metadata').JSONView('toggle');
     });
 
     $('#toggle-level1-btn').on('click', function() {
-    $('#json').JSONView('toggle', 1);
+    $('#metadata').JSONView('toggle', 1);
     });
 
     $('#toggle-level2-btn').on('click', function() {
-    $('#json').JSONView('toggle', 2);
+    $('#metadata').JSONView('toggle', 2);
     });
     });
+
+var data = ${data}
+
+    $(function() {
+    $('#data').JSONView(data);
+
+    $('#collapse-btn').on('click', function() {
+    $('#data').JSONView('collapse');
+    });
+
+    $('#expand-btn').on('click', function() {
+    $('#data').JSONView('expand');
+    });
+
+    $('#toggle-btn').on('click', function() {
+    $('#data').JSONView('toggle');
+    });
+
+    $('#toggle-level1-btn').on('click', function() {
+    $('#data').JSONView('toggle', 1);
+    });
+
+    $('#toggle-level2-btn').on('click', function() {
+    $('#data').JSONView('toggle', 2);
+    });
+    });
+
+
 </script>
 </body>
 </html>
