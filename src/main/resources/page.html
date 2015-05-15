@@ -6,6 +6,9 @@
     <link rel="stylesheet" href="https://rawgithub.com/yesmeck/jquery-jsonview/master/dist/jquery.jsonview.css" />
     <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
     <script type="text/javascript" src="https://rawgithub.com/yesmeck/jquery-jsonview/master/dist/jquery.jsonview.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+    <script src="http://code.highcharts.com/highcharts-more.js"></script>
 </head>
 <body>
 <br/>
@@ -16,7 +19,7 @@
 <button id="toggle-level2-btn">Toggle level2</button>
 
 <div id="metadata"></div>
-<div id="data"></div>
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 <script>
 var metadata = ${metadata}
@@ -47,30 +50,82 @@ var metadata = ${metadata}
 
 var data = ${data}
 
-    $(function() {
-    $('#data').JSONView(data);
-
-    $('#collapse-btn').on('click', function() {
-    $('#data').JSONView('collapse');
+function zip(arrays) {
+    return arrays[0].map(function(_,i){
+        return arrays.map(function(array){return array[i]})
     });
+}
 
-    $('#expand-btn').on('click', function() {
-    $('#data').JSONView('expand');
-    });
+var xy = zip([data.x, data.y]);
 
-    $('#toggle-btn').on('click', function() {
-    $('#data').JSONView('toggle');
-    });
+var err = zip([data.x, data.yErrLow, data.yErrHigh]);
 
-    $('#toggle-level1-btn').on('click', function() {
-    $('#data').JSONView('toggle', 1);
-    });
+console.log(xy.toString());
+console.log(err.toString());
 
-    $('#toggle-level2-btn').on('click', function() {
-    $('#data').JSONView('toggle', 2);
-    });
-    });
+$(function () {
+    $('#container').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Spectrum'
+        },
+        subtitle: {
+            text: data.target
+        },
+        tooltip: {
+            crosshairs: [true, true],
+            formatter: function() {
+                return '<b>'+data.target+'</b><br/> <b>x:</b> '
+                + this.x.toExponential() + ' '
+                +data.xUnits+'<br/><b>y:</b> ' + this.y.toExponential()+' '+data.yUnits;
+            }
+        },
+        xAxis: {
+            type: "linear",
+            title: {
+                text: 'Spectral Axis ('+data.xUnits+')'
+            },
+            labels: {
+                formatter : function() {
+                    return this.value.toExponential();
+                }
+            },
+        },
+        yAxis: {
+            title: {
+                text: 'FluxAxis ('+data.yUnits+')'
+            },
+            labels: {
+                formatter : function() {
+                    return this.value.toExponential();
+                }
+            }
+        },
 
+        plotOptions: {
+            spline: {
+                marker: {
+                    enabled: true
+                }
+            }
+        },
+
+        series: [{
+            data: xy
+        },
+            {
+            name: 'Error',
+            type: 'errorbar',
+            data: err,
+            tooltip: {
+                pointFormat: '(error range: {point.low}-{point.high})<br/>'
+            }
+        },
+        ]
+    });
+});
 
 </script>
 </body>
