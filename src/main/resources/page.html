@@ -12,11 +12,20 @@
 </head>
 <body>
 <br/>
-<button id="collapse-btn">Collapse</button>
-<button id="expand-btn">Expand</button>
+<form name="dsForm" method="POST" action="/test">
+    URL: <input type='text' name='ds' size='100'/>
+    prefix: <input type='text' name='prefix' value='spec'/>
+    <a href="javascript: submitform()">Go</a>
+</form>
+<script type="text/javascript">
+function submitform()
+{
+  document.dsForm.submit();
+}
+</script>
+<br/>
+<br/>
 <button id="toggle-btn">Toggle</button>
-<button id="toggle-level1-btn">Toggle level1</button>
-<button id="toggle-level2-btn">Toggle level2</button>
 
 <div id="metadata"></div>
 <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
@@ -25,27 +34,12 @@
 var metadata = ${metadata}
 
     $(function() {
-    $('#metadata').JSONView(metadata);
-
-    $('#collapse-btn').on('click', function() {
-    $('#metadata').JSONView('collapse');
-    });
-
-    $('#expand-btn').on('click', function() {
-    $('#metadata').JSONView('expand');
-    });
+    $('#metadata').JSONView(metadata, { collapsed: true });
 
     $('#toggle-btn').on('click', function() {
     $('#metadata').JSONView('toggle');
     });
 
-    $('#toggle-level1-btn').on('click', function() {
-    $('#metadata').JSONView('toggle', 1);
-    });
-
-    $('#toggle-level2-btn').on('click', function() {
-    $('#metadata').JSONView('toggle', 2);
-    });
     });
 
 var data = ${data}
@@ -58,7 +52,15 @@ function zip(arrays) {
 
 var xy = zip([data.x, data.y]);
 
-var err = zip([data.x, data.yErrLow, data.yErrHigh]);
+var err = function() {
+    nonzeros = data.yErrLow.filter(function(x) { if (x != 0) {return x;} });
+    nonzeros.concat(data.yErrHigh.filter(function(x) { if (x != 0) {return x;} }));
+    if (nonzeros.length) {
+        return zip([data.x, data.yErrLow, data.yErrHigh]);
+    } else {
+        return zip([data.x, "NaN", "NaN"]);
+    }
+}
 
 console.log(xy.toString());
 console.log(err.toString());
@@ -66,7 +68,7 @@ console.log(err.toString());
 $(function () {
     $('#container').highcharts({
         chart: {
-            type: 'line'
+            zoomType: 'xy',
         },
         title: {
             text: 'Spectrum'
@@ -105,6 +107,25 @@ $(function () {
         },
 
         plotOptions: {
+            area: {
+                fillColor: {
+                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1},
+                    stops: [
+                        [0, Highcharts.getOptions().colors[0]],
+                        [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                    ]
+                },
+                marker: {
+                    radius: 2
+                },
+                lineWidth: 1,
+                states: {
+                    hover: {
+                        lineWidth: 1
+                    }
+                },
+                threshold: null
+            },
             spline: {
                 marker: {
                     enabled: true
@@ -113,9 +134,10 @@ $(function () {
         },
 
         series: [{
+            type: 'area',
             data: xy
         },
-            {
+        {
             name: 'Error',
             type: 'errorbar',
             data: err,

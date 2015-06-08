@@ -37,11 +37,12 @@ public class SimpleSpectrum implements BeanView<SpectralDataset> {
         int len = ds.getData().size();
         Double[] err = new Double[len];
         for (int i=0; i<len; i++) {
+            Double flux = null;
             try {
-                Double flux = ds.getData(i).getFluxAxis().getValue().getValue();
+                flux = ds.getData(i).getFluxAxis().getValue().getValue();
                 err[i] = flux - ds.getData(i).getFluxAxis().getAccuracy().getStatError().getValue();
             } catch(Exception ex) {
-                err[i] = Double.NaN;
+                err[i] = flux == null? null : flux;
             }
         }
         return err;
@@ -51,11 +52,12 @@ public class SimpleSpectrum implements BeanView<SpectralDataset> {
         int len = ds.getData().size();
         Double[] err = new Double[len];
         for (int i=0; i<len; i++) {
+            Double flux = null;
             try {
-                Double flux = ds.getData(i).getFluxAxis().getValue().getValue();
+                flux = ds.getData(i).getFluxAxis().getValue().getValue();
                 err[i] = flux + ds.getData(i).getFluxAxis().getAccuracy().getStatError().getValue();
             } catch(Exception ex) {
-                err[i] = Double.NaN;
+                err[i] = flux == null? null : flux;
             }
         }
         return err;
