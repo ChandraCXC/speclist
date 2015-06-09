@@ -22,7 +22,7 @@
     </li>
 </ul>
 </p>
-<form name="dsForm" method="POST" action="/test">
+<form name="dsForm" method="POST" action="/">
     URL: <input type='text' name='ds' size='100'/>
     prefix: <input type='text' name='prefix' value='spec'/>
     <a href="javascript: submitform()">Go</a>
