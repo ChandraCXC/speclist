@@ -12,6 +12,16 @@
 </head>
 <body>
 <br/>
+<p>Examples:
+<ul>
+    <li>
+        http://dc.g-vo.org/flashheros/q/sdl/dlget?ID=ivo%3A//org.gavo.dc/%7E%3Fflashheros/data/ca92/f0006.mt&FORMAT=application/x-votable%2Bxml%3Bcontent%3Dspec2
+    </li>
+    <li>
+        http://dc.g-vo.org/theossa/q/sdl/dlget?ID=ivo%3A%2F%2Fwww.g-vo.org%2Ftheossa%2Fq%2Fdata%2F0038000_5.70_H_9.968E-01_HE_3.167E-03_02000-03000A_2008-08-02_07_20_01&FORMAT=application/x-votable%2Bxml%3Bcontent%3Dspec2
+    </li>
+</ul>
+</p>
 <form name="dsForm" method="POST" action="/test">
     URL: <input type='text' name='ds' size='100'/>
     prefix: <input type='text' name='prefix' value='spec'/>
@@ -61,9 +71,6 @@ var err = function() {
         return zip([data.x, "NaN", "NaN"]);
     }
 }
-
-console.log(xy.toString());
-console.log(err.toString());
 
 $(function () {
     $('#container').highcharts({
