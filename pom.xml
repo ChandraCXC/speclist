@@ -15,7 +15,6 @@
     </properties>
 
   <build>
-    <pluginManagement>
       <plugins>
           <plugin>
               <groupId>org.apache.tomcat.maven</groupId>
@@ -34,9 +33,6 @@
             <compilerArgument></compilerArgument>
           </configuration>
         </plugin>
-      </plugins>
-    </pluginManagement>
-    <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
