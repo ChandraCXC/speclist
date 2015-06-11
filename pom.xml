@@ -86,4 +86,24 @@
           <scope>provided</scope>
       </dependency>
   </dependencies>
+
+    <repositories>
+        <repository>
+            <id>cxc-artifactory</id>
+            <url>http://artifactory.cfa.harvard.edu/artifactory/repo</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>cxc-snapshots</id>
+            <name>snapshots</name>
+            <url>http://artifactory.cfa.harvard.edu/artifactory/libs-snapshot-local</url>
+        </snapshotRepository>
+        <repository>
+            <id>cxc-releases</id>
+            <name>releases</name>
+            <url>http://artifactory.cfa.harvard.edu/artifactory/libs-release-local</url>
+        </repository>
+    </distributionManagement>
 </project>
